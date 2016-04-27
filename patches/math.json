@@ -1,0 +1,54 @@
+{
+  "nodes": [
+  {
+    "id": 1,
+    "proto": "float",
+    "args": [1],
+    "layout":
+    {
+      "x":100,
+      "y":200
+    }
+  },
+  {
+    "id": 2,
+    "proto": "float",
+    "args": [2],
+    "layout":
+    {
+      "x":150,
+      "y":200
+    }
+  },
+  {
+    "id": 3,
+    "proto": "+",
+    "args": [],
+    "layout":
+    {
+      "x":120,
+      "y":250
+    }
+  }],
+  "connections": [
+  {
+    "source": {
+      "id": 1,
+      "port": 0
+    },
+    "sink": {
+      "id": 3,
+      "port": 0
+    }
+  },
+  {
+    "source": {
+      "id": 2,
+      "port": 0
+    },
+    "sink": {
+      "id": 3,
+      "port": 1
+    }
+  }]
+}

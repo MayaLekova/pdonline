@@ -1,78 +1,43 @@
-var patchData = {
-  nodes: [
-  {
-    id: 1,
-    proto: 'float',
-    args: [1],
-    layout:
-    {
-      "x":100,
-      "y":200
-    },
-    //layout: {<key>: <value>},
-    //data: [<number1>, ..., <numberN>],
-  },
-  {
-    id: 2,
-    proto: 'float',
-    args: [2],
-    layout:
-    {
-      "x":150,
-      "y":200
-    },
-  },
-  {
-    id: 3,
-    proto: '+',
-    args: [],
-    layout:
-    {
-      "x":120,
-      "y":250
-    },
-  }],
-  connections: [
-  {
-    source: {
-      id: 1,
-      port: 0
-    },
-    sink: {
-      id: 3,
-      port: 0
-    }
-  },
-  {
-    source: {
-      id: 2,
-      port: 0
-    },
-    sink: {
-      id: 3,
-      port: 1
-    }
-  }]
+var patchData;
+
+function updateNodeFromString(id, str) {
+  var args = str.split(' ');
+  var proto = args[0];
+  var node = _.findWhere(patchData.nodes, {id: id});
+  node.proto = proto;
+  if(args.length > 1) {
+    args.shift();
+    node.args = args;
+  }
 }
 
-$('#svg').html(pdfu.renderSvg(patchData, {svgFile: false, ratio: 1.5}))
-$('g').click(function(ev) {
-  var self = this;
+$.get('patches/math.json', function(patchJsonStr) {
+  patchData = JSON.parse(patchJsonStr);
+  
+  $('#svg').html(pdfu.renderSvg(patchData, {svgFile: false, ratio: 1.5}))
+  $('g').click(function(ev) {
+    console.log(this.node);
+    var self = this;
 
-  var txtInput = $('<input type="text" style="width: 62px; position: absolute"/>')
-    .change(function(ev) {
-      var txt = $(self).children('text');
-      txt.html($(this).val());
-      $(this).remove();
-    }).focusout(function(ev) {
-      $(this).remove();
-    });
+    var txtInput = $('<input type="text" style="width: 62px; position: absolute"/>')
+      .change(function(ev) {
+        var txtEl = $(self).children('text');
+        var objectStr = $(this).val();
+        txtEl.html(objectStr);
+        $(this).remove();
 
-  txtInput.css({top: $(this).position().top
-              , left: $(this).position().left});
-  txtInput.val($(this).children('text').html());
+        updateNodeFromString(+$(self).attr('id'), objectStr);
+      }).focusout(function(ev) {
+        $(this).remove();
+      });
 
-  $("#svg").prepend(txtInput);
-  txtInput.focus();
+    txtInput.css({top: $(this).position().top
+                , left: $(this).position().left});
+    txtInput.val($(this).children('text').html());
+
+    $("#svg").prepend(txtInput);
+    txtInput.focus();
+  })
+  $('#svg > svg > g').unbind('click');
 })
-$('#svg > svg > g').unbind('click');
+
